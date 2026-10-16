@@ -1,0 +1,15 @@
+streamlit
+anyio==4.11.0
+bcrypt
+litellm
+PyPDF2
+pycryptodome
+python-docx
+Pillow
+nest-asyncio
+markdown
+xhtml2pdf
+PyMuPDF
+python-dotenv
+numpy
+psycopg[binary]

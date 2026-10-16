@@ -1,0 +1,55 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: drakeslm-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: drake_ai
+      POSTGRES_USER: drake
+      POSTGRES_PASSWORD: drake_local
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U drake -d drake_ai"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - drakeslm-net
+
+  drakeslm:
+    build:
+      context: .
+    image: drakeslm:latest
+    container_name: drakeslm
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://drake:drake_local@postgres:5432/drake_ai
+    ports:
+      - "8053:8501"
+    volumes:
+      - ./database:/app/database
+      - ./temp_uploads:/app/temp_uploads
+    networks:
+      - drakeslm-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      - streamlit
+      - run
+      - app.py
+      - --server.port=8501
+      - --server.address=0.0.0.0
+      - --server.headless=true
+      - --browser.gatherUsageStats=false
+
+networks:
+  drakeslm-net:
+    name: drakeslm-net
+    driver: bridge
+
+volumes:
+  postgres-data:

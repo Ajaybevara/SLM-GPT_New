@@ -1,0 +1,14 @@
+.deploy/
+.venv/
+.env
+__pycache__/
+**/__pycache__/
+*.pyc
+streamlit.log
+temp_uploads/
+database/*.db
+database/*.db-*
+database/rag_workspace_*/
+database/model_cache/
+database/postgres_data/
+database/postgres.log

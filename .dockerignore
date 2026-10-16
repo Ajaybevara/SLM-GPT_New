@@ -1,0 +1,14 @@
+.git
+.venv
+.deploy
+__pycache__
+**/__pycache__
+*.pyc
+*.pyo
+.env
+streamlit.log
+temp_uploads
+database/*.db
+database/rag_workspace_*
+database/__pycache__
+Drake AI Portal.docx
