@@ -6,7 +6,7 @@ import psycopg
 from psycopg.rows import dict_row
 
 
-DEFAULT_DATABASE_URL = "postgresql://drake@127.0.0.1:5433/drake_ai"
+DEFAULT_DATABASE_URL = "postgresql://drake@127.0.0.1:5543/drake_ai"
 
 
 def get_database_url():
@@ -83,6 +83,8 @@ def register_user(username, password):
         return False, "Username and password are required."
     if len(password) < 6:
         return False, "Password must be at least 6 characters."
+    if len(password.encode("utf-8")) > 72:
+        return False, "Password must be at most 72 UTF-8 bytes."
     initialize_extended_schema()
     password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
     try:
@@ -95,6 +97,8 @@ def register_user(username, password):
 
 
 def verify_login(username, password):
+    if len((password or "").encode("utf-8")) > 72:
+        return False, None
     initialize_extended_schema()
     with _connection() as connection:
         with connection.cursor() as cursor:

@@ -699,9 +699,13 @@ def main():
             #if st.session_state.username == "admin":
                # menu_options.append("Admin Console 🛡️")
                 
+            # Apply button navigation before constructing the radio widget.
+            if "pending_module" in st.session_state:
+                st.session_state.module_navigation = st.session_state.pop("pending_module")
             st.session_state.current_app = st.radio(
                 "📌 Select Module:",
-                menu_options
+                menu_options,
+                key="module_navigation",
             )
             st.divider()
 #            if st.button("🚪 Logout", use_container_width=True):
@@ -786,15 +790,16 @@ def main():
                         if selected_for_permanent_rag:
                             if st.button(f"🧠 Load {len(selected_for_permanent_rag)} Documents into Permanent Graph", type="primary", use_container_width=True):
                                 st.session_state.docs_to_rag = selected_for_permanent_rag
-                                st.session_state.current_app = "Knowledge RAG"
+                                st.session_state.pending_module = "Knowledge RAG"
                                 st.session_state.is_temp_rag_chat = False # Ensure permanent mode
                                 st.rerun()
                     with col_b:
                         if selected_for_temp_chat:
                             if st.button(f"💬 Start Temp Chat with {len(selected_for_temp_chat)} Documents", use_container_width=True):
                                 st.session_state.temp_chat_docs = selected_for_temp_chat
+                                st.session_state.temp_chat_history = []
                                 st.session_state.is_temp_rag_chat = True # Activate temp mode
-                                st.session_state.current_app = "Knowledge RAG"
+                                st.session_state.pending_module = "Knowledge RAG"
                                 st.rerun()
 
                     # Render Text Viewer if requested

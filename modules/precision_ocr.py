@@ -70,7 +70,7 @@ def generate_word_from_markdown(md_text):
         if strip_line.startswith('|'):
             if '---' in strip_line: 
                 continue
-            cells = [c.strip() for c in strip_line.split('|') if c.strip()]
+            cells = [c.strip() for c in strip_line.strip('|').split('|')]
             if cells:
                 table_data.append(cells)
                 in_table = True
@@ -95,7 +95,7 @@ def generate_word_from_markdown(md_text):
                 table_data = []
                 in_table = False
 
-        if not in_table and strip_line:
+        if not in_table and strip_line and not strip_line.startswith('|'):
             p = doc.add_paragraph()
             if '**' in strip_line:
                 parts = strip_line.split('**')

@@ -18,3 +18,13 @@
 2026-10-16 12:24:16.578 IST [264] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.202 s, sync=0.014 s, total=0.240 s; sync files=3, longest=0.010 s, average=0.005 s; distance=1 kB, estimate=2597 kB; lsn=0/1A825F8, redo lsn=0/1A825C0
 2026-10-16 12:29:16.588 IST [264] LOG:  checkpoint starting: time
 2026-10-16 12:29:16.736 IST [264] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.125 s, sync=0.003 s, total=0.149 s; sync files=2, longest=0.003 s, average=0.002 s; distance=0 kB, estimate=2338 kB; lsn=0/1A82770, redo lsn=0/1A82738
+2026-10-16 12:34:16.745 IST [264] LOG:  checkpoint starting: time
+2026-10-16 12:34:16.872 IST [264] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.115 s, sync=0.003 s, total=0.127 s; sync files=2, longest=0.003 s, average=0.002 s; distance=0 kB, estimate=2104 kB; lsn=0/1A829E8, redo lsn=0/1A829B0
+2026-10-16 12:39:16.873 IST [264] LOG:  checkpoint starting: time
+2026-10-16 12:39:17.014 IST [264] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.118 s, sync=0.005 s, total=0.142 s; sync files=2, longest=0.004 s, average=0.003 s; distance=8 kB, estimate=1894 kB; lsn=0/1A84D30, redo lsn=0/1A84CF8
+2026-10-16 12:49:16.011 IST [264] LOG:  checkpoint starting: time
+2026-10-16 12:49:20.187 IST [264] LOG:  checkpoint complete: wrote 40 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.152 s, sync=0.010 s, total=4.177 s; sync files=17, longest=0.001 s, average=0.001 s; distance=217 kB, estimate=1727 kB; lsn=0/1AEE898, redo lsn=0/1ABB358
+2026-10-16 12:54:16.197 IST [264] LOG:  checkpoint starting: time
+2026-10-16 12:54:20.292 IST [264] LOG:  checkpoint complete: wrote 38 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.050 s, sync=0.019 s, total=4.096 s; sync files=14, longest=0.004 s, average=0.002 s; distance=227 kB, estimate=1577 kB; lsn=0/1AF4160, redo lsn=0/1AF4128
+2026-10-16 13:04:16.318 IST [264] LOG:  checkpoint starting: time
+2026-10-16 13:04:17.821 IST [264] LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.451 s, sync=0.018 s, total=1.503 s; sync files=14, longest=0.004 s, average=0.002 s; distance=8 kB, estimate=1420 kB; lsn=0/1AF6310, redo lsn=0/1AF62D8

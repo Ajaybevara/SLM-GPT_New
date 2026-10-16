@@ -87,38 +87,44 @@ def _chunk_document(text, words_per_chunk=260, overlap_words=50):
     return chunks
 
 def extract_text_from_file(uploaded_file):
+    uploaded_file.seek(0)
     filename = uploaded_file.name.lower()
     text_content = ""
     if filename.endswith(".pdf"):
         file_bytes = uploaded_file.getvalue()
         reader = PyPDF2.PdfReader(io.BytesIO(file_bytes))
-        for page in reader.pages:
+        if reader.is_encrypted and not reader.decrypt(""):
+            raise ValueError("This PDF requires a password. Upload an unlocked copy.")
+        page_text = []
+        for page_number, page in enumerate(reader.pages):
             extracted = page.extract_text()
-            if extracted:
-                text_content += extracted + "\n"
-
-        # Image-only/scanned PDFs have little or no embedded text. In that case,
-        # render and transcribe one page at a time to keep vision requests small.
-        if len(text_content.strip()) < 40:
-            pdf = pymupdf.open(stream=file_bytes, filetype="pdf")
-            page_text = []
-            for page_number, page in enumerate(pdf, start=1):
-                pix = page.get_pixmap(dpi=180, alpha=False)
+            if not extracted or not extracted.strip():
+                # Check each page so mixed text/scanned PDFs do not lose pages.
+                with pymupdf.open(stream=file_bytes, filetype="pdf") as pdf:
+                    if pdf.needs_pass:
+                        pdf.authenticate("")
+                    pix = pdf[page_number].get_pixmap(dpi=180, alpha=False)
                 image = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
                 extracted = vision_complete(
                     "Extract every visible word, number, heading, form field, and table from this document page. "
                     "Preserve table structure in Markdown. Return only extracted content.",
                     [image],
                 )
-                page_text.append(f"## Page {page_number}\n{extracted}")
-            text_content = "\n\n".join(page_text)
+            page_text.append(extracted or "")
+        text_content = "\n\n".join(page_text)
                 
     elif filename.endswith(".docx"):
         doc = docx.Document(uploaded_file)
-        text_content = "\n".join([para.text for para in doc.paragraphs])
+        parts = []
+        for block in doc.iter_inner_content():
+            if isinstance(block, docx.table.Table):
+                parts.extend(" | ".join(cell.text for cell in row.cells) for row in block.rows)
+            else:
+                parts.append(block.text)
+        text_content = "\n".join(parts)
         
     elif filename.endswith((".txt", ".md", ".csv")):
-        text_content = uploaded_file.getvalue().decode("utf-8")
+        text_content = uploaded_file.getvalue().decode("utf-8-sig")
         
     elif filename.endswith((".png", ".jpg", ".jpeg")):
         img = Image.open(uploaded_file)
@@ -307,7 +313,8 @@ def render_permanent_rag_app():
                         st.success(f"Successfully injected {len(docs)} vaulted documents into the Graph without uploading!")
                 except Exception as e:
                     st.error(f"Failed to load from vault: {str(e)}")
-        
+            else:
+                st.error("The selected documents contain no readable text.")
         st.session_state.docs_to_rag = []
 
     with st.sidebar:
@@ -334,7 +341,14 @@ def render_permanent_rag_app():
                 with st.spinner("Extracting text and building Graph... This might take a minute."):
                     combined_text = ""
                     for file in uploaded_files:
-                        extracted = extract_text_from_file(file)
+                        try:
+                            extracted = extract_text_from_file(file)
+                        except Exception as e:
+                            st.error(f"Could not read {file.name}: {e}")
+                            continue
+                        if not extracted.strip():
+                            st.warning(f"No readable text was found in {file.name}.")
+                            continue
                         combined_text += f"\n\n--- Document: {file.name} ---\n{extracted}"
                         
                         # --- SAAS UPGRADE: SAVE TO SQL VAULT ---
@@ -386,6 +400,7 @@ def render_permanent_rag_app():
                     save_chat_message(user_id, "LightRAG", session_id, "assistant", response)
                 except Exception as e:
                     st.error(f"Error querying graph: {str(e)}")
+                    return
         
         st.rerun()
 

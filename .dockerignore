@@ -7,6 +7,9 @@ __pycache__
 *.pyo
 .env
 streamlit.log
+streamlit-error.log
+database/postgres_data
+database/*.log
 temp_uploads
 database/*.db
 database/rag_workspace_*
